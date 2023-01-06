@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { BrandsService } from './brands.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
@@ -21,7 +23,8 @@ export class BrandsController {
   }
 
   @Get()
-  findAll() {
+  findAll(@ActiveUser() user: ActiveUserData) {
+    console.log('user', user);
     return this.brandsService.findAll();
   }
 
