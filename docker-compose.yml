@@ -9,3 +9,8 @@ services:
       POSTGRES_DB: courty
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"

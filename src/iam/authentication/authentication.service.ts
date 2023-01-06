@@ -12,6 +12,7 @@ import { UserModel } from 'src/database/models/user.model';
 import jwtConfig from '../config/jwt.config';
 import { HashingService } from '../hashing/hashing.service';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 
@@ -58,22 +59,66 @@ export class AuthenticationService {
         throw new UnauthorizedException('Invalid credentials');
       }
 
-      const accessToken = await this.jwtService.signAsync(
-        {
-          sub: user.id,
-          email: user.email,
-        } as ActiveUserData,
-        {
-          audience: this.jwtConfiguration.audience,
-          issuer: this.jwtConfiguration.issuer,
-          secret: this.jwtConfiguration.secret,
-          expiresIn: this.jwtConfiguration.accessTokenTtl,
-        },
-      );
+      const [accessToken, refreshToken] = await this.generateTokens(user);
 
-      return { accessToken };
+      return { accessToken, refreshToken };
     } catch (err) {
       throw err;
     }
+  }
+
+  /**
+   * Generates access and refresh tokens
+   */
+  async generateTokens(user: UserModel): Promise<[string, string]> {
+    return await Promise.all([
+      this.signToken<Partial<ActiveUserData>>(
+        user.id,
+        this.jwtConfiguration.accessTokenTtl,
+        { email: user.email },
+      ),
+      this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl),
+    ]);
+  }
+
+  /**
+   * Refreshes access and refresh tokens
+   */
+  async refreshTokens(refreshTokenDto: RefreshTokenDto) {
+    try {
+      const { sub } = await this.jwtService.verifyAsync<
+        Pick<ActiveUserData, 'sub'>
+      >(refreshTokenDto.refreshToken, {
+        audience: this.jwtConfiguration.audience,
+        secret: this.jwtConfiguration.secret,
+        issuer: this.jwtConfiguration.issuer,
+      });
+
+      const user = await this.modelClass
+        .query()
+        .findById(sub)
+        .throwIfNotFound();
+      return this.generateTokens(user);
+    } catch (err) {
+      throw new UnauthorizedException();
+    }
+  }
+
+  /**
+   * Signs a token
+   */
+  private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
+    return await this.jwtService.signAsync(
+      {
+        sub: userId,
+        ...payload,
+      },
+      {
+        audience: this.jwtConfiguration.audience,
+        issuer: this.jwtConfiguration.issuer,
+        secret: this.jwtConfiguration.secret,
+        expiresIn,
+      },
+    );
   }
 }
