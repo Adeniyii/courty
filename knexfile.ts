@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import type { Knex } from 'knex';
 import { knexSnakeCaseMappers } from 'objection';
 

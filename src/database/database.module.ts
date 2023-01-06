@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { Global, Module } from '@nestjs/common';
 import Knex from 'knex';
 import { knexSnakeCaseMappers, Model } from 'objection';
