@@ -3,8 +3,10 @@ import { Global, Module } from '@nestjs/common';
 import Knex from 'knex';
 import { knexSnakeCaseMappers, Model } from 'objection';
 import { UserModel } from './models/user.model';
+import { BrandModel } from './models/brand.model';
+import { AddonModel } from './models/addon.model';
 
-const models = [UserModel];
+const models = [UserModel, BrandModel, AddonModel];
 
 const modelProviders = models.map((model) => {
   return {
