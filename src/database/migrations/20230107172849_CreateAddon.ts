@@ -11,8 +11,10 @@ export async function up(knex: Knex) {
     t.string('description');
     t.integer('price').notNullable();
     t.string('category');
-    t.foreign('brandId').notNullable();
+    t.integer('brandId').unsigned().notNullable();
     t.timestamps(true, true);
+
+    t.foreign('brandId').references('brands.id');
   });
 }
 

@@ -11,6 +11,7 @@
     "migrate": "npx knex migrate:latest",
     "migrate:make": "npx knex migrate:make -x ts",
     "migrate:list": "npx knex migrate:list",
+    "migrate:rollback": "npx knex migrate:rollback",
     "seed": "npx knex seed:run",
     "seed:make": "npx knex seed:make -x ts",
     "start": "nest start",

@@ -14,5 +14,7 @@ export async function up(knex: Knex) {
 }
 
 export async function down(knex: Knex) {
-  return knex.schema.dropTable(tableName);
+  return knex.schema.table(tableName, (table) => {
+    table.dropColumn('role');
+  });
 }
