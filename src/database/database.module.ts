@@ -5,8 +5,9 @@ import { knexSnakeCaseMappers, Model } from 'objection';
 import { UserModel } from './models/user.model';
 import { BrandModel } from './models/brand.model';
 import { AddonModel } from './models/addon.model';
+import { AddonCategoryModel } from './models/addon_category.model';
 
-const models = [UserModel, BrandModel, AddonModel];
+const models = [UserModel, BrandModel, AddonModel, AddonCategoryModel];
 
 const modelProviders = models.map((model) => {
   return {

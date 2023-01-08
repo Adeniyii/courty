@@ -2,8 +2,8 @@ import { IsEmail, MinLength } from 'class-validator';
 
 export class SignUpDto {
   @IsEmail()
-  email: string;
+  readonly email: string;
 
   @MinLength(8)
-  password: string;
+  readonly password: string;
 }
