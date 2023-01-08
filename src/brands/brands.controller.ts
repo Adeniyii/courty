@@ -8,8 +8,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { Roles } from 'src/iam/authorization/decorators/roles.decorator';
-import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
-import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { Role } from 'src/users/enums/role.enum';
 import { CreateAddonDto } from './addons/dto/create-addon.dto';
 import { UpdateAddonDto } from './addons/dto/update-addon.dto';
@@ -29,8 +27,7 @@ export class BrandsController {
   }
 
   @Get()
-  findAll(@ActiveUser() user: ActiveUserData) {
-    console.log('user', user);
+  findAll() {
     return this.brandsService.findAll();
   }
 

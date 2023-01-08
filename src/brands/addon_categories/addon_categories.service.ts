@@ -14,4 +14,12 @@ export class AddonCategoriesService {
     const payload = { ...createAddonCategoriesDto, brandId };
     return this.modelClass.query().insert(payload).returning('*');
   }
+
+  findAll(brandId: number) {
+    return this.modelClass.query().where({ brandId });
+  }
+
+  findByBrandIdAndName(brandId: number, name: string) {
+    return this.modelClass.query().findOne({ brandId, name });
+  };
 }
