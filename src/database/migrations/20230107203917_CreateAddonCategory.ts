@@ -11,6 +11,8 @@ export async function up(knex: Knex) {
     t.integer('brandId').unsigned().notNullable();
     t.timestamps(true, true);
 
+    t.unique(['name', 'brandId']);
+    t.index(['name', 'brandId']);
     t.foreign('brandId').references('brands.id');
   });
 }
