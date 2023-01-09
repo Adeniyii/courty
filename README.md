@@ -2,6 +2,24 @@
 
 An experimental backend service written in NestJS, complete with custom-rolled authentication, RBAC authorization, caching, and database storage.
 
+## Hosting
+
+Live at [courty.fly.dev](courty.fly.dev).
+
+## QuickStart
+
+The database has been seeded with an admin user, the details are:
+
+```
+email: slimreaper@gmail.com
+password: slimreaper
+
+```
+
+Use this account to access the api. Alternatvely, to explore your powerlessness, create an account using the `sign-up` endpoint. This account will not have admin priveledges.
+
+No brands, or brand addons have been seeded, so have fun creating some with the admin account.
+
 ## Features
 
 - **Docker support**
@@ -14,15 +32,11 @@ An experimental backend service written in NestJS, complete with custom-rolled a
 - **Validation**: request data validation using [class-validator](https://github.com/typestack/class-validator)
 - **Linting**: with [ESLint](https://eslint.org) and [Prettier](https://prettier.io)
 
-## Hosting
-
-Live at [courty.fly.dev](courty.fly.dev).
-
 ## Installation
 
 ```bash
 $ npm install
-```
+````
 
 ## Running the app
 
