@@ -5,7 +5,7 @@ An experimental backend service written in NestJS, complete with custom-rolled a
 ## Features
 
 - **Docker support**
-- **Deployment**: Dockerfile is deployed on [fly.io](https://fly.io)
+- **Deployment**: Dockerfile is deployed on the [fly.io](https://fly.io) cloud platform
 - **Backend**: API written using [NestJS](https://nestjs.com)
 - **SQL database**: PostgreSQL provided by [Railway](https://www.railway.app)
 - **ORM and Migrations**: Object Relational Mapper using [Objection](https://objection.com), and migrations using [Knex](https://knex.com)
@@ -75,11 +75,14 @@ List of available routes:
 **Auth routes**:\
 `POST /authentication/sign-up` - sign up\
 `POST /authentication/sign-in` - sign in\
-`POST /authentication/refresh-tokens` - refresh auth tokens\
+`POST /authentication/refresh-tokens` - refresh auth tokens
 
 **Brand routes**:\
 `POST /brands` - create a brand\
 `GET /brands` - get all brands\
-`GET /v1/users/:userId` - get user\
-`PATCH /v1/users/:userId` - update user\
-`DELETE /v1/users/:userId` - delete user
+`POST /brands/:brandId/addons` - create a meal addon for the specified brand\
+`GET /brands/:brandId/addons` - get all meal addons for the specified brand\
+`GET /brands/:brandId/addons/:addonId` - get a single meal addon for the specified brand\
+`PATCH /brands/:brandId/addons/:addonId` - update a single meal addon for the specified brand\
+`DELETE /brands/:brandId/addons/:addonId` - delete a single meal addon for the specified brand\
+`POST /brands/:brandId/addon-categories` - create a meal addon-category for the specified brand
