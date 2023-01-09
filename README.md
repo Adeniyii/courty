@@ -1,30 +1,22 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Backend for a Meal provider service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+An experimental backend service written in NestJS, complete with custom-rolled authentication, RBAC authorization, caching, and database storage.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- **Docker support**
+- **Deployment**: Dockerfile is deployed on [fly.io](https://fly.io)
+- **Backend**: API written using [NestJS](https://nestjs.com)
+- **SQL database**: PostgreSQL provided by [Railway](https://www.railway.app)
+- **ORM and Migrations**: Object Relational Mapper using [Objection](https://objection.com), and migrations using [Knex](https://knex.com)
+- **Caching**: Lightweight caching of refresh-tokens using **Redis** provided by [Upstash](https://upstash.com/)
+- **Authentication and authorization**: Custom rolled JWT strategy, with a rotating refresh token system
+- **Validation**: request data validation using [class-validator](https://github.com/typestack/class-validator)
+- **Linting**: with [ESLint](https://eslint.org) and [Prettier](https://prettier.io)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Hosting
+
+Live at [courty.fly.dev](courty.fly.dev).
 
 ## Installation
 
@@ -45,29 +37,49 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+Docker:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# run docker container in development mode
+$ docker-compose up -d
 ```
 
-## Support
+Linting:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+# run ESLint
+$ npm run lint
+```
 
-## Stay in touch
+## Environment Variables
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+The environment variables can be found and modified in the `.env.example` file.
 
-## License
+```bash
+# db
+DATABASE_URL=
+REDIS_URL=
 
-Nest is [MIT licensed](LICENSE).
+# jwt
+JWT_SECRET=
+JWT_TOKEN_ISSUER=
+JWT_ACCESS_TOKEN_TTL=
+JWT_REFRESH_TOKEN_TTL=
+
+```
+
+### API Endpoints
+
+List of available routes:
+
+**Auth routes**:\
+`POST /authentication/sign-up` - sign up\
+`POST /authentication/sign-in` - sign in\
+`POST /authentication/refresh-tokens` - refresh auth tokens\
+
+**Brand routes**:\
+`POST /brands` - create a brand\
+`GET /brands` - get all brands\
+`GET /v1/users/:userId` - get user\
+`PATCH /v1/users/:userId` - update user\
+`DELETE /v1/users/:userId` - delete user
