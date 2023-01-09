@@ -20,6 +20,8 @@ Use this account to access the api. Alternatvely, to explore your powerlessness,
 
 No brands, or brand addons have been seeded, so have fun creating some with the admin account.
 
+**Note**: Make sure to attach the auth-token recieved from the `sign-up` or `refresh-tokens` endpoint as a bearer token to protected api endpoints.
+
 ## Features
 
 - **Docker support**
