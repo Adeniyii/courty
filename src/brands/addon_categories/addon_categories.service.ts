@@ -21,5 +21,5 @@ export class AddonCategoriesService {
 
   findByBrandIdAndName(brandId: number, name: string) {
     return this.modelClass.query().findOne({ brandId, name });
-  };
+  }
 }

@@ -16,6 +16,7 @@ import { RolesGuard } from './authorization/guards/roles.guard';
   imports: [
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
+    ConfigModule,
   ],
   providers: [
     {

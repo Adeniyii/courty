@@ -24,7 +24,7 @@ export class BrandsService {
   findAll() {
     return this.modelClass.query().withGraphFetched({
       addons: true,
-      addon_categories: true
+      addon_categories: true,
     });
   }
 
@@ -46,12 +46,17 @@ export class BrandsService {
   }
 
   async createAddon(brandId: number, createAddonDto: CreateAddonDto) {
-    const addonCategory = await this.addonCategoryService.findByBrandIdAndName(brandId, createAddonDto.category);
+    const addonCategory = await this.addonCategoryService.findByBrandIdAndName(
+      brandId,
+      createAddonDto.category,
+    );
     console.log('addonCategory', addonCategory);
 
     // If the addon category doesn't exist, create it
     if (!addonCategory) {
-      await this.addonCategoryService.create(brandId, { name: createAddonDto.category });
+      await this.addonCategoryService.create(brandId, {
+        name: createAddonDto.category,
+      });
     }
     return this.addonService.create(createAddonDto, brandId);
   }
@@ -70,11 +75,17 @@ export class BrandsService {
     updateAddonDto: UpdateAddonDto,
   ) {
     if (updateAddonDto.name) {
-      const addonCategory = await this.addonCategoryService.findByBrandIdAndName(brandId, updateAddonDto.category);
+      const addonCategory =
+        await this.addonCategoryService.findByBrandIdAndName(
+          brandId,
+          updateAddonDto.category,
+        );
 
       // If the addon category doesn't exist, create it
       if (!addonCategory) {
-        this.addonCategoryService.create(brandId, { name: updateAddonDto.category });
+        this.addonCategoryService.create(brandId, {
+          name: updateAddonDto.category,
+        });
       }
     }
     return this.addonService.update(addonId, brandId, updateAddonDto);

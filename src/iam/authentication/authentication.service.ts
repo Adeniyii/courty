@@ -40,7 +40,7 @@ export class AuthenticationService {
 
       await user.$query().insert();
     } catch (err) {
-      if (err.code === pgUniqueViolationErrorCode) {
+      if ((err as any).code === pgUniqueViolationErrorCode) {
         throw new ConflictException('Email already exists');
       }
       throw err;
@@ -102,7 +102,6 @@ export class AuthenticationService {
       const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
         Pick<ActiveUserData, 'sub'> & { refreshTokenId: string }
       >(refreshTokenDto.refreshToken, {
-        audience: this.jwtConfiguration.audience,
         secret: this.jwtConfiguration.secret,
         issuer: this.jwtConfiguration.issuer,
       });
@@ -141,7 +140,6 @@ export class AuthenticationService {
         ...payload,
       },
       {
-        audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
         secret: this.jwtConfiguration.secret,
         expiresIn,
