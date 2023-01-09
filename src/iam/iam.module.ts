@@ -11,12 +11,14 @@ import { AccessTokenGuard } from './authentication/guards/access-token/access-to
 import { AuthenticationGuard } from './authentication/guards/authentication/authentication.guard';
 import { RefreshTokenIdsStorage } from './authentication/refresh-token-ids.storage';
 import { RolesGuard } from './authorization/guards/roles.guard';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     ConfigModule,
+    UsersModule,
   ],
   providers: [
     {

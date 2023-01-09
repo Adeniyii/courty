@@ -15,6 +15,7 @@ import appConfig from './app.config';
       load: [appConfig],
       ignoreEnvFile: process.env.NODE_ENV === 'production',
       validationSchema: Joi.object({
+        PORT: Joi.required(),
         DATABASE_URL: Joi.required(),
         REDIS_URL: Joi.required(),
         JWT_SECRET: Joi.required(),

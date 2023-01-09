@@ -1,5 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ModelClass } from 'objection';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { ModelClass, NotFoundError, UniqueViolationError } from 'objection';
 import { BrandModel } from 'src/database/models/brand.model';
 import { AddonsService } from './addons/addons.service';
 import { CreateAddonDto } from './addons/dto/create-addon.dto';
@@ -17,88 +22,154 @@ export class BrandsService {
     private readonly addonCategoryService: AddonCategoriesService,
   ) {}
 
-  create(createBrandDto: CreateBrandDto) {
-    return this.modelClass.query().insert(createBrandDto).returning('*');
+  /**
+   * Create a brand and return the created brand
+   */
+  async create(createBrandDto: CreateBrandDto) {
+    try {
+      return await this.modelClass.query().insertAndFetch(createBrandDto);
+    } catch (err) {
+      if (err instanceof UniqueViolationError) {
+        throw new ConflictException('Brand name is taken');
+      }
+      throw err;
+    }
   }
 
-  findAll() {
-    return this.modelClass.query().withGraphFetched({
-      addons: true,
-      addon_categories: true,
-    });
+  /**
+   * Find all brands with their addons and addon categories
+   */
+  async findAll() {
+    try {
+      return await this.modelClass.query().throwIfNotFound().withGraphFetched({
+        addons: true,
+        addon_categories: true,
+      });
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        throw new NotFoundException('No brands found');
+      }
+      throw err;
+    }
   }
 
-  findOne(brandId: number) {
-    return this.modelClass.query().findById(brandId);
+  /**
+   * Find a brand by brandId
+   */
+  async findOne(brandId: number) {
+    try {
+      return await this.modelClass.query().findById(brandId).throwIfNotFound();
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        throw new NotFoundException('No brands found');
+      }
+      throw err;
+    }
   }
 
-  update(brandId: number, updateBrandDto: UpdateBrandDto) {
-    return this.modelClass
-      .query()
-      .patch(updateBrandDto)
-      .where({ id: brandId })
-      .returning('*')
-      .first();
+  /**
+   * Update a brand by brandId
+   */
+  async update(brandId: number, updateBrandDto: UpdateBrandDto) {
+    try {
+      return await this.modelClass
+        .query()
+        .patchAndFetchById(brandId, updateBrandDto)
+        .throwIfNotFound();
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        throw new NotFoundException('No brand found');
+      }
+      throw err;
+    }
   }
 
-  remove(brandId: number) {
-    return this.modelClass.query().deleteById(brandId);
+  /**
+   * Remove a brand by brandId
+   */
+  async remove(brandId: number) {
+    try {
+      return await this.modelClass.query().deleteById(brandId);
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        throw new NotFoundException('No brand found');
+      }
+      throw err;
+    }
   }
 
+  /**
+   * Create an addon for a brand by brandId.
+   * If the addon category doesn't exist, throw an error.
+   */
   async createAddon(brandId: number, createAddonDto: CreateAddonDto) {
     const addonCategory = await this.addonCategoryService.findByBrandIdAndName(
       brandId,
       createAddonDto.category,
     );
-    console.log('addonCategory', addonCategory);
 
-    // If the addon category doesn't exist, create it
+    // If the addon category doesn't exist, throw an error
     if (!addonCategory) {
-      await this.addonCategoryService.create(brandId, {
-        name: createAddonDto.category,
-      });
+      throw new NotFoundException('Addon category not found');
     }
-    return this.addonService.create(createAddonDto, brandId);
+
+    return await this.addonService.create(createAddonDto, brandId);
   }
 
-  findAddons(brandId: number) {
-    return this.addonService.findAll(brandId);
+  /**
+   * Find all addons for a brand by brandId
+   */
+  async findAddons(brandId: number) {
+    return await this.addonService.findAll(brandId);
   }
 
-  findOneAddon(addonId: number, brandId: number) {
-    return this.addonService.findOne(addonId, brandId);
+  /**
+   * Find an addon for a brand by addonId and brandId
+   */
+  async findOneAddon(addonId: number, brandId: number) {
+    return await this.addonService.findOne(addonId, brandId);
   }
 
+  /**
+   * Update an addon for a brand by addonId and brandId
+   */
   async updateAddon(
     addonId: number,
     brandId: number,
     updateAddonDto: UpdateAddonDto,
   ) {
-    if (updateAddonDto.name) {
+    if (updateAddonDto.category) {
       const addonCategory =
         await this.addonCategoryService.findByBrandIdAndName(
           brandId,
           updateAddonDto.category,
         );
 
-      // If the addon category doesn't exist, create it
+      // If the addon category doesn't exist, throw an error
       if (!addonCategory) {
-        this.addonCategoryService.create(brandId, {
-          name: updateAddonDto.category,
-        });
+        throw new NotFoundException('Addon category not found');
       }
     }
-    return this.addonService.update(addonId, brandId, updateAddonDto);
+    return await this.addonService.update(addonId, brandId, updateAddonDto);
   }
 
-  removeAddon(addonId: number, brandId: number) {
-    return this.addonService.remove(addonId, brandId);
+  /**
+   * Remove an addon from a brand by addonId and brandId
+   */
+  async removeAddon(addonId: number, brandId: number) {
+    return await this.addonService.remove(addonId, brandId);
   }
 
-  createAddonCategory(
+  /**
+   * Create an addon category for a brand by brandId
+   */
+  async createAddonCategory(
     brandId: number,
     createAddonCategoryDto: CreateAddonCategoryDto,
   ) {
-    return this.addonCategoryService.create(brandId, createAddonCategoryDto);
+    return await this.addonCategoryService.create(
+      brandId,
+      createAddonCategoryDto,
+    );
   }
 }

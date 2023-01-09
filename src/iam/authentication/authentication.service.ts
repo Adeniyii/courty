@@ -8,8 +8,8 @@ import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { ModelClass } from 'objection';
-import { pgUniqueViolationErrorCode } from 'src/constants';
 import { UserModel } from 'src/database/models/user.model';
+import { UsersService } from 'src/users/users.service';
 import jwtConfig from '../config/jwt.config';
 import { HashingService } from '../hashing/hashing.service';
 import { ActiveUserData } from '../interfaces/active-user-data.interface';
@@ -27,48 +27,47 @@ export class AuthenticationService {
     @Inject('UserModel') private modelClass: ModelClass<UserModel>,
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
+    private readonly userService: UsersService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
   ) {}
 
   async signUp(signUpDto: SignUpDto) {
-    try {
-      const user = new this.modelClass();
-      user.email = signUpDto.email;
-      user.password = await this.hashingService.hash(signUpDto.password);
+    const userFromDb = await this.modelClass
+      .query()
+      .findOne({ email: signUpDto.email });
 
-      await user.$query().insert();
-    } catch (err) {
-      if ((err as any).code === pgUniqueViolationErrorCode) {
-        throw new ConflictException('Email already exists');
-      }
-      throw err;
+    if (userFromDb) {
+      throw new ConflictException('User already exists');
     }
+    const password = await this.hashingService.hash(signUpDto.password);
+
+    return await this.userService.create({ ...signUpDto, password });
   }
 
   async signIn(signInDto: SignInDto) {
+    let user: UserModel;
+
     try {
-      const user = await this.modelClass
-        .query()
-        .findOne({ email: signInDto.email });
-
-      if (!user) {
-        throw new UnauthorizedException('Invalid credentials');
-      }
-      const isPasswordValid = await this.hashingService.compare(
-        signInDto.password,
-        user.password,
-      );
-
-      if (!isPasswordValid) {
-        throw new UnauthorizedException('Invalid credentials');
-      }
-
-      return await this.generateTokens(user);
+      user = await this.userService.findByEmail(signInDto.email);
     } catch (err) {
-      throw err;
+      throw new UnauthorizedException('Invalid credentials');
     }
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    const isPasswordValid = await this.hashingService.compare(
+      signInDto.password,
+      user.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    return await this.generateTokens(user);
   }
 
   /**
@@ -121,7 +120,7 @@ export class AuthenticationService {
       } else {
         throw new Error('Refresh token is invalid');
       }
-      return this.generateTokens(user);
+      return await this.generateTokens(user);
     } catch (err) {
       if (err instanceof InvalidatedRefreshTokenError) {
         throw new UnauthorizedException('Access denied');

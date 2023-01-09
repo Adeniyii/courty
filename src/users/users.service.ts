@@ -1,28 +1,83 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { ModelClass, UniqueViolationError } from 'objection';
+import { UserModel } from 'src/database/models/user.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    console.log(createUserDto);
-    return 'This action adds a new user';
+  constructor(
+    @Inject('UserModel') private readonly modelClass: ModelClass<UserModel>,
+  ) {}
+
+  /**
+   * Create a user and return the created user
+   */
+  async create(createUserDto: CreateUserDto) {
+    try {
+      return await this.modelClass.query().insertAndFetch(createUserDto);
+    } catch (err) {
+      if (err instanceof UniqueViolationError) {
+        throw new ConflictException('User already exists');
+      }
+      throw err;
+    }
   }
 
+  /**
+   * Find all users with their addons and addon categories
+   */
   findAll() {
-    return `This action returns all users`;
+    throw new HttpException(
+      'Method not implemented',
+      HttpStatus.NOT_IMPLEMENTED,
+    );
   }
 
+  /**
+   * Find a user by id
+   */
   findOne(id: number) {
-    return `This action returns a #${id} user`;
+    return this.modelClass.query().findById(id).throwIfNotFound();
   }
 
+  /**
+   * Find a user by email
+   */
+  findByEmail(email: string) {
+    try {
+      return this.modelClass.query().findOne({ email }).throwIfNotFound();
+    } catch {
+      throw new NotFoundException('User does not exist');
+    }
+  }
+
+  /**
+   * Update a user by id and return the updated user
+   */
   update(id: number, updateUserDto: UpdateUserDto) {
-    console.log(updateUserDto);
-    return `This action updates a #${id} user`;
+    console.log(id, updateUserDto);
+    throw new HttpException(
+      'Method not implemented',
+      HttpStatus.NOT_IMPLEMENTED,
+    );
   }
 
+  /**
+   * Remove a user by id
+   */
   remove(id: number) {
-    return `This action removes a #${id} user`;
+    console.log(id);
+    throw new HttpException(
+      'Method not implemented',
+      HttpStatus.NOT_IMPLEMENTED,
+    );
   }
 }

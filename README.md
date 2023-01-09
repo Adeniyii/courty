@@ -28,7 +28,7 @@ No brands, or brand addons have been seeded, so have fun creating some with the 
 - **Deployment**: Dockerfile is deployed on the [fly.io](https://fly.io) cloud platform
 - **Backend**: API written using [NestJS](https://nestjs.com)
 - **SQL database**: PostgreSQL provided by [Railway](https://www.railway.app)
-- **ORM and Migrations**: Object Relational Mapper using [Objection](https://objection.com), and migrations using [Knex](https://knex.com)
+- **ORM and Migrations**: Object Relational Mapping using [Objection](https://vincit.github.io/objection.js/), and migrations using [Knex](https://knex.com)
 - **Caching**: Lightweight caching of refresh-tokens using **Redis** provided by [Upstash](https://upstash.com/)
 - **Authentication and authorization**: Custom rolled JWT strategy, with a rotating refresh token system
 - **Validation**: request data validation using [class-validator](https://github.com/typestack/class-validator)
@@ -38,7 +38,7 @@ No brands, or brand addons have been seeded, so have fun creating some with the 
 
 ```bash
 $ npm install
-````
+```
 
 ## Running the app
 
@@ -57,6 +57,7 @@ Docker:
 
 ```bash
 # run docker container in development mode
+$ docker build -t courty .
 $ docker-compose up -d
 ```
 
@@ -65,6 +66,18 @@ Linting:
 ```bash
 # run ESLint
 $ npm run lint
+```
+
+Migration:
+
+```bash
+$ npm run migrate
+```
+
+Seeding:
+
+```bash
+$ npm run seed
 ```
 
 ## Environment Variables
