@@ -4,7 +4,7 @@ An experimental backend service written in NestJS, complete with custom-rolled a
 
 ## Hosting
 
-Live at [courty.fly.dev](courty.fly.dev).
+Live at [courty.fly.dev](https://courty.fly.dev).
 
 ## QuickStart
 
