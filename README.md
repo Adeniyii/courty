@@ -85,6 +85,8 @@ $ npm run seed
 The environment variables can be found and modified in the `.env.example` file.
 
 ```bash
+PORT=8080
+
 # db
 DATABASE_URL=
 REDIS_URL=
