@@ -9,9 +9,10 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './authentication/guards/access-token/access-token.guard';
 import { AuthenticationGuard } from './authentication/guards/authentication/authentication.guard';
-import { RefreshTokenIdsStorage } from './authentication/refresh-token-ids.storage';
+import { TokenIdsStorage } from './authentication/token-ids.storage';
 import { RolesGuard } from './authorization/guards/roles.guard';
 import { UsersModule } from 'src/users/users.module';
+import { AppService } from 'src/app.service';
 
 @Module({
   imports: [
@@ -34,8 +35,9 @@ import { UsersModule } from 'src/users/users.module';
       useClass: RolesGuard,
     },
     AccessTokenGuard,
-    RefreshTokenIdsStorage,
+    TokenIdsStorage,
     AuthenticationService,
+    AppService,
   ],
   controllers: [AuthenticationController],
 })

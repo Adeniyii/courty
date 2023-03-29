@@ -44,8 +44,8 @@ export class UsersService {
   /**
    * Find a user by id
    */
-  findOne(id: number) {
-    return this.modelClass.query().findById(id).throwIfNotFound();
+  async findOne(id: number) {
+    return await this.modelClass.query().findById(id).throwIfNotFound();
   }
 
   /**
@@ -62,12 +62,12 @@ export class UsersService {
   /**
    * Update a user by id and return the updated user
    */
-  update(id: number, updateUserDto: UpdateUserDto) {
-    console.log(id, updateUserDto);
-    throw new HttpException(
-      'Method not implemented',
-      HttpStatus.NOT_IMPLEMENTED,
-    );
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const updatedUser = await this.modelClass
+      .query()
+      .findById(id)
+      .patch(updateUserDto);
+    return updatedUser;
   }
 
   /**

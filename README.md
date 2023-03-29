@@ -97,6 +97,13 @@ JWT_TOKEN_ISSUER=
 JWT_ACCESS_TOKEN_TTL=
 JWT_REFRESH_TOKEN_TTL=
 
+# mail
+MAIL_USERNAME=
+MAIL_PASSWORD=
+OAUTH_CLIENTID=
+OAUTH_CLIENT_SECRET=
+OAUTH_REFRESH_TOKEN=
+
 ```
 
 ### API Endpoints
@@ -106,7 +113,9 @@ List of available routes:
 **Auth routes**:\
 `POST /authentication/sign-up` - sign up\
 `POST /authentication/sign-in` - sign in\
-`POST /authentication/refresh-tokens` - refresh auth tokens
+`POST /authentication/refresh-tokens` - refresh auth tokens\
+`POST /authentication/forgot-password` - Generate reset password link/token\
+`POST /authentication/change-password` - change password
 
 **Brand routes**:\
 `POST /brands` - create a brand\
